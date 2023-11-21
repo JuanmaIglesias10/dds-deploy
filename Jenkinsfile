@@ -20,13 +20,6 @@ pipeline {
             }
         }
         
-        stage('Desplegar') {
-            steps {
-                sh 'deploy-script.sh'
-            }
-        }
-    }
-    
     post {
         success {
             echo 'Pipeline exitoso. ¡Felicidades!'
