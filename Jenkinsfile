@@ -1,31 +1,11 @@
-pipeline {
-    agent any
-    
-    stages {
-        stage('Obtener Código') {
-            steps {
-                git 'https://github.com/JuanmaIglesias10/dds-deploy.git'
-            }
-        }
-        
-        stage('Construir') {
-            steps {
-                sh 'mvn clean install'
-            }
-        }
-        
-        stage('Pruebas') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        
-    post {
-        success {
-            echo 'Pipeline exitoso. ¡Felicidades!'
-        }
-        failure {
-            echo 'El pipeline falló. Revisar los logs para más detalles.'
-        }
+node {
+  stage('SCM') {
+    checkout scm
+  }
+  stage('SonarQube Analysis') {
+    def mvn = tool 'Default Maven';
+    withSonarQubeEnv() {
+      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=sonarQube -Dsonar.projectName='sonarQube'"
     }
+  }
 }
