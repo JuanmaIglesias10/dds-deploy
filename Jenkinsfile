@@ -15,7 +15,7 @@ node {
                     docker.build(ddsdeploy)
 
                     // Iniciar sesión en Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com', dockerhub-credentials) {
+                    docker.withRegistry('https://registry.hub.docker.com','dockerhub-credentials') {
                         // Hacer push de la imagen construida a Docker Hub
                         docker.image(ddsdeploy).push()
                     }
