@@ -1,7 +1,4 @@
 node {
-	agent {label 'linux'} 
-	environment {
-		    DOCKERHUB_CREDENTIALS=credentials('dockerhub-credentials')	}
 stage('SCM') {
     checkout scm
   }
@@ -11,14 +8,12 @@ stage('SCM') {
       sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=sonarQube -Dsonar.projectName='sonarQube'"
     }
   }
+}
+agent {label 'linux'} 
+environment {
+	DOCKERHUB_CREDENTIALS=credentials('dockerhub-credentials')}
 
-   		stage('gitclone') {
-
-		steps {
-			git 'https://github.com/JuanmaIglesias10/dds-deploy.git'
-			}
-		}
-
+	stages {
 		stage('Build') {
 
 			steps {
@@ -39,5 +34,4 @@ stage('SCM') {
 				sh 'docker push jiglesiass/ddsdeploy:latest'
 			}
 		}
-	
-    }
+}
