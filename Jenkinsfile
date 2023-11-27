@@ -8,18 +8,36 @@ node {
       sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=sonarQube -Dsonar.projectName='sonarQube'"
     }
   }
-  stage('Construir y Publicar Imagen Docker') {
-            steps {
-                script {
-                    // Construir la imagen Docker
-                    docker.build(ddsdeploy)
+  stages {
+	  environment {
+		    DOCKERHUB_CREDENTIALS=credentials('dockerhub-credentials')
+	    
+      stage('gitclone') {
 
-                    // Iniciar sesión en Docker Hub
-                    docker.withRegistry('https://registry.hub.docker.com','dockerhub-credentials') {
-                        // Hacer push de la imagen construida a Docker Hub
-                        docker.image(ddsdeploy).push()
-                    }
-                }
-            }
-    }
+			steps {
+				git 'https://github.com/JuanmaIglesias10/dds-deploy.git'
+			}
+		}
+
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t jiglesiass/ddsdeploy:latest .'
+			}
+		}
+
+		stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push') {
+
+			steps {
+				sh 'docker push jiglesiass/ddsdeploy:latest'
+			}
+		}
+	}
 }
