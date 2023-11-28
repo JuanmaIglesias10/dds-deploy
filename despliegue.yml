@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploytp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      nombre: apptp
+      tier: backend
+  template:
+    metadata: 
+      labels:
+        nombre: apptp
+        tier: backend
+    spec: 
+      containers:
+        - name: tp-container
+          image: jiglesiass/ddsdeploy
+        # - name: ...
+        #   image: ...
